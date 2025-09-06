@@ -60,7 +60,7 @@ export const ImagesSlider = ({
 
     let interval;
     if (autoplay) {
-      interval = setInterval(handleNext, 5000);
+      interval = setInterval(handleNext, 5000); // 4-5s per image
     }
 
     return () => {
@@ -69,24 +69,12 @@ export const ImagesSlider = ({
     };
   }, []);
 
-  const slideVariants = {
-    initial: { scale: 0, opacity: 0, rotateX: 45 },
-    visible: {
-      scale: 1,
-      rotateX: 0,
-      opacity: 1,
-      transition: { duration: 0.5, ease: [0.645, 0.045, 0.355, 1.0] },
-    },
-    upExit: { opacity: 1, y: "-150%", transition: { duration: 1 } },
-    downExit: { opacity: 1, y: "150%", transition: { duration: 1 } },
-  };
-
   const areImagesLoaded = loadedImages.length > 0;
 
   return (
     <div
       className={cn(
-        "overflow-hidden h-full w-full relative flex items-center justify-center",
+        "overflow-hidden h-screen w-screen relative flex items-center justify-center",
         className
       )}
       style={{ perspective: "1000px" }}
@@ -98,19 +86,23 @@ export const ImagesSlider = ({
         />
       )}
 
-      {areImagesLoaded && (
-        <AnimatePresence>
-          <motion.img
-            key={currentIndex}
-            src={loadedImages[currentIndex]}
-            initial="initial"
-            animate="visible"
-            exit={direction === "up" ? "upExit" : "downExit"}
-            variants={slideVariants}
-            className="h-full w-full absolute inset-0 object-cover object-center"
-          />
-        </AnimatePresence>
-      )}
+      {areImagesLoaded &&
+        loadedImages.map((img, idx) => (
+          <AnimatePresence key={idx} mode="wait">
+            <motion.img
+              key={idx}
+              src={img}
+              initial={{ opacity: 0 }}
+              animate={{
+                opacity: idx === currentIndex ? 1 : 0,
+                transition: { duration: 1.5 },
+              }}
+              exit={{ opacity: 0, transition: { duration: 0 } }}
+              className="absolute inset-0 h-screen w-screen object-cover object-center"
+            />
+          </AnimatePresence>
+        ))}
     </div>
   );
 };
+

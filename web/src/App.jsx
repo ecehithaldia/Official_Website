@@ -1,15 +1,15 @@
-// App.jsx
-import { useEffect, useState } from "react";
+
+import React, { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "./firebase"; 
 import { seedTeachers } from "./SeedTeacher"; 
 import { ImagesSlider } from "@/components/ui/images-slider";
-import "./App.css";
+import { NavbarDemo } from "./components/NavbarDemo";
 
 export default function App() {
   const [teachers, setTeachers] = useState([]);
 
-  // 🔹 Function to fetch teachers
+  
   const fetchTeachers = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "teachers"));
@@ -19,38 +19,57 @@ export default function App() {
       }));
       setTeachers(teacherList);
     } catch (error) {
-      console.error("❌ Error fetching teachers:", error);
+      console.error("Error fetching teachers:", error);
     }
   };
 
   useEffect(() => {
-    // 👇 Uncomment only when you need to (after deleting collection or adding new teachers)
+   
     seedTeachers();
 
     fetchTeachers();
   }, []);
 
   return (
-    <div className="h-screen w-screen flex flex-col">
-      {/* Image Slider */}
-      <ImagesSlider
-        images={[
-          "https://picsum.photos/id/1018/1000/600",
-          "https://picsum.photos/id/1015/1000/600",
-          "https://picsum.photos/id/1019/1000/600",
-        ]}
-      >
-        <h1 className="z-50 text-white text-4xl md:text-5xl font-heading font-bold leading-tight text-center">
-          Department <br />
-          of <br />
-          Electronics & Communication Engineering
-        </h1>
-      </ImagesSlider>
+    <div className="w-screen">
 
-      {/* Teacher List */}
-      <div className="p-6 bg-gray-100 flex-1 overflow-y-auto">
+{/* Slider */}
+
+      <div className="relative w-screen h-screen">
+        <NavbarDemo />
+        <ImagesSlider
+          className="h-full w-full"
+          images={[
+            "https://picsum.photos/id/1018/1920/1080",
+            "https://picsum.photos/id/1015/1920/1080",
+            "https://picsum.photos/id/1019/1920/1080",
+          ]}
+        >
+          <div className="relative z-50 flex flex-col items-center justify-center h-full">
+            <h1 className="text-white text-4xl md:text-5xl font-heading font-bold leading-tight text-center">
+              Department <br />
+              of <br />
+              Electronics & Communication Engineering <br/>
+            </h1>
+            <h6 className="text-white text-0.5xl mt-7 md:text-0.625xl font-heading leading-tight text-center">
+              Accredited by National Board of Accreditation (NBA) <br />
+              (Under the School of Engineering)
+            </h6>
+            <h4 className="text-white text-2xl mt-7 md:text-2.5xl font-heading font-bold leading-tight text-center">
+              Haldia Institute of Technology
+            </h4>
+            <h4 className="text-white text-0.5xl mt-1 md:text-0.625xl font-heading leading-tight text-center">
+              (An autonomous institute, approved by AICTE) <br />
+              NAAC Accredited Grade 'A'
+            </h4>
+          </div>
+        </ImagesSlider>
+      </div>
+
+{/* Teacher List */}
+      <div className="p-6 bg-gray-100 min-h-screen">
         <h2 className="text-2xl font-bold mb-4">Our Teachers</h2>
-        <ul className="space-y-2">
+        <ul className="space-y-4">
           {teachers.map((teacher) => (
             <li
               key={teacher.id}
@@ -67,3 +86,4 @@ export default function App() {
     </div>
   );
 }
+
