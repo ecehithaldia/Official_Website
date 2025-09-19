@@ -1,15 +1,15 @@
-
 import React, { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "./firebase"; 
 import { seedTeachers } from "./SeedTeacher"; 
 import { ImagesSlider } from "@/components/ui/images-slider";
 import { NavbarDemo } from "./components/NavbarDemo";
+import { BentoGrid, BentoGridItem } from "./components/ui/bento-grid.jsx";
+import { Footer } from "@/components/Footer";
 
 export default function App() {
   const [teachers, setTeachers] = useState([]);
 
-  
   const fetchTeachers = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "teachers"));
@@ -24,17 +24,16 @@ export default function App() {
   };
 
   useEffect(() => {
-   
     seedTeachers();
-
     fetchTeachers();
   }, []);
 
+  const sections = ["about", "students", "research", "events", "downloads"];
+
   return (
-    <div className="w-screen">
+    <div className="w-screen scroll-smooth">
 
-{/* Slider */}
-
+      {/* Slider */}
       <div className="relative w-screen h-screen">
         <NavbarDemo />
         <ImagesSlider
@@ -45,20 +44,20 @@ export default function App() {
             "https://picsum.photos/id/1019/1920/1080",
           ]}
         >
-          <div className="relative z-50 flex flex-col items-center justify-center h-full">
-            <h1 className="text-white text-4xl md:text-5xl font-heading font-bold leading-tight text-center">
+          <div className="relative z-50 flex flex-col items-center justify-center h-full text-center px-6">
+            <h1 className="text-white text-4xl md:text-5xl font-heading font-bold leading-tight">
               Department <br />
               of <br />
-              Electronics & Communication Engineering <br/>
+              Electronics & Communication Engineering <br />
             </h1>
-            <h6 className="text-white text-0.5xl mt-7 md:text-0.625xl font-heading leading-tight text-center">
+            <h6 className="text-white text-sm mt-7 md:text-base font-heading leading-tight">
               Accredited by National Board of Accreditation (NBA) <br />
               (Under the School of Engineering)
             </h6>
-            <h4 className="text-white text-2xl mt-7 md:text-2.5xl font-heading font-bold leading-tight text-center">
+            <h4 className="text-white text-2xl mt-7 md:text-3xl font-heading font-bold leading-tight">
               Haldia Institute of Technology
             </h4>
-            <h4 className="text-white text-0.5xl mt-1 md:text-0.625xl font-heading leading-tight text-center">
+            <h4 className="text-white text-sm mt-1 md:text-base font-heading leading-tight">
               (An autonomous institute, approved by AICTE) <br />
               NAAC Accredited Grade 'A'
             </h4>
@@ -66,24 +65,49 @@ export default function App() {
         </ImagesSlider>
       </div>
 
-{/* Teacher List */}
-      <div className="p-6 bg-gray-100 min-h-screen">
-        <h2 className="text-2xl font-bold mb-4">Our Teachers</h2>
-        <ul className="space-y-4">
-          {teachers.map((teacher) => (
-            <li
-              key={teacher.id}
-              className="p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition"
-            >
-              <h3 className="font-semibold text-lg">{teacher.name}</h3>
-              {teacher.subject && (
-                <p className="text-gray-600">Subject: {teacher.subject}</p>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
+      {/* Multi Sections */}
+      {sections.map((section) => (
+        <section
+          key={section}
+          id={section}
+          className="p-6 bg-gray-50 dark:bg-gray-900 snap-start scroll-mt-24"
+        >
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-12 text-center tracking-wide text-gray-900 dark:text-white mt-6">
+            {section.toUpperCase()}
+          </h2>
+
+          <BentoGrid className="mt-6">
+            {teachers.map((teacher) => (
+              <BentoGridItem
+                key={`${section}-${teacher.id}`}
+                title={teacher.name}
+                description={teacher.subject || "Subject not available"}
+                className="relative overflow-hidden rounded-xl group"
+                header={
+                  <div
+                    className="absolute inset-0 w-full h-full bg-center bg-cover transition-transform duration-500 ease-in-out group-hover:scale-115"
+                    style={{
+                      backgroundImage:
+                        'url("https://images.pexels.com/photos/7648307/pexels-photo-7648307.jpeg")',
+                    }}
+                  >
+                    <div className="absolute inset-0 "></div>
+                  </div>
+                }
+              />
+            ))}
+          </BentoGrid>
+        </section>
+      ))}
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }
+
+
+
+
+
 

@@ -7,6 +7,8 @@
     { name: "Prof. A", subject: "Electronics" },
     { name: "Prof. B", subject: "Communication" },
     { name: "Prof. C", subject: "Signal Processing" },
+    { name: "Prof. D", subject: "Electro Magnetics" },
+
   ];
 
   export const seedTeachers = async () => {
