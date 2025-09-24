@@ -11,7 +11,7 @@ import {
 
 export function Footer() {
   return (
-    <footer className="bg-gradient-to-r from-gray-900 to-gray-800 text-gray-100 dark:text-gray-200 py-16 relative z-10">
+    <footer className="bg-black text-white py-16 relative z-10">
       <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-12">
         {/* Brand & Description */}
         <div className="space-y-4">
@@ -70,16 +70,16 @@ export function Footer() {
           </div>
           <div className="flex items-center gap-2">
             <IconMail size={20} className="text-blue-400" />
-            <span>ecdept@hit.edu.in</span>
+            <span>ecedept@hit.edu.in</span>
           </div>
         </div>
 
       </div>
 
-      <div className=" mt-12 pt-6 text-center text-gray-500 text-sm">
+      <div className="mt-12 pt-6 text-center text-gray-500 text-sm">
         &copy; {new Date().getFullYear()} Electronics & Communication Engineering Department, Haldia Institute of Technology. All rights reserved.
       </div>
-      <div className=" mt-1 pt-6 text-center text-gray-500 text-sm">
+      <div className="mt-1 pt-6 text-center text-gray-500 text-sm">
          Developed with passion by Geex.
       </div>
     </footer>

@@ -4,8 +4,12 @@ import { db } from "./firebase";
 import { seedTeachers } from "./SeedTeacher"; 
 import { ImagesSlider } from "@/components/ui/images-slider";
 import { NavbarDemo } from "./components/NavbarDemo";
-import { BentoGrid, BentoGridItem } from "./components/ui/bento-grid.jsx";
 import { Footer } from "@/components/Footer";
+import { About } from "./components/About";
+import { Students } from "./components/Students";
+import { Research } from "./components/Research";
+import { Events } from "./components/Events";
+import { Downloads } from "./components/Downloads";
 
 export default function App() {
   const [teachers, setTeachers] = useState([]);
@@ -28,10 +32,8 @@ export default function App() {
     fetchTeachers();
   }, []);
 
-  const sections = ["about", "students", "research", "events", "downloads"];
-
   return (
-    <div className="w-screen scroll-smooth">
+    <div className="w-screen scroll-smooth bg-white dark:bg-gray-900">
 
       {/* Slider */}
       <div className="relative w-screen h-screen">
@@ -66,45 +68,18 @@ export default function App() {
       </div>
 
       {/* Multi Sections */}
-      {sections.map((section) => (
-        <section
-          key={section}
-          id={section}
-          className="p-6 bg-gray-50 dark:bg-gray-900 snap-start scroll-mt-24"
-        >
-          <h2 className="text-4xl md:text-5xl font-extrabold mb-12 text-center tracking-wide text-gray-900 dark:text-white mt-6">
-            {section.toUpperCase()}
-          </h2>
-
-          <BentoGrid className="mt-6">
-            {teachers.map((teacher) => (
-              <BentoGridItem
-                key={`${section}-${teacher.id}`}
-                title={teacher.name}
-                description={teacher.subject || "Subject not available"}
-                className="relative overflow-hidden rounded-xl group"
-                header={
-                  <div
-                    className="absolute inset-0 w-full h-full bg-center bg-cover transition-transform duration-500 ease-in-out group-hover:scale-115"
-                    style={{
-                      backgroundImage:
-                        'url("https://images.pexels.com/photos/7648307/pexels-photo-7648307.jpeg")',
-                    }}
-                  >
-                    <div className="absolute inset-0 "></div>
-                  </div>
-                }
-              />
-            ))}
-          </BentoGrid>
-        </section>
-      ))}
+      <About teachers={teachers} />
+      <Students teachers={teachers} />
+      <Research teachers={teachers} />
+      <Events teachers={teachers} />
+      <Downloads teachers={teachers} />
 
       {/* Footer */}
       <Footer />
     </div>
   );
 }
+
 
 
 
