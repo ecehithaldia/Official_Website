@@ -10,6 +10,8 @@ import { Students } from "./components/Students";
 import { Research } from "./components/Research";
 import { Events } from "./components/Events";
 import { Downloads } from "./components/Downloads";
+import { Hod } from "./components/hod";
+
 
 export default function App() {
   const [teachers, setTeachers] = useState([]);
@@ -68,6 +70,7 @@ export default function App() {
       </div>
 
       {/* Multi Sections */}
+      <Hod />
       <About teachers={teachers} />
       <Students teachers={teachers} />
       <Research teachers={teachers} />

@@ -5,9 +5,9 @@ export function Students({ teachers }) {
   return (
     <section
       id="students"
-      className="p-6 bg-white dark:bg-gray-800 snap-start scroll-mt-24"
+      className="p-6bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 snap-start scroll-mt-24"
     >
-      <h2 className="text-4xl md:text-5xl font-extrabold mb-12 text-center tracking-wide text-gray-900 dark:text-white mt-6">
+      <h2 className="text-4xl md:text-5xl font-extrabold mb-12 text-center tracking-wide text-gray-900 dark:text-white mt-36">
         STUDENTS
       </h2>
 

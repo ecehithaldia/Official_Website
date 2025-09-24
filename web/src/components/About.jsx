@@ -5,13 +5,13 @@ export function About({ teachers }) {
   return (
     <section
       id="about"
-      className="p-6 bg-white dark:bg-gray-800 snap-start scroll-mt-24"
+      className="p-6 bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 snap-start scroll-mt-24"
     >
-      <h2 className="text-4xl md:text-5xl font-extrabold mb-12 text-center tracking-wide text-gray-900 dark:text-white mt-6">
+      <h2 className="text-4xl md:text-5xl font-extrabold mb-12 text-center tracking-wide text-gray-900 dark:text-white mt-26">
         ABOUT
       </h2>
 
-      <BentoGrid className="mt-6">
+      <BentoGrid className="mt-16">
         {teachers.map((teacher) => (
           <BentoGridItem
             key={`about-${teacher.id}`}
