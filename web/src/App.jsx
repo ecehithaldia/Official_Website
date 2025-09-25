@@ -69,7 +69,7 @@ export default function App() {
         </ImagesSlider>
       </div>
 
-      {/* Multi Sections */}
+      
       <Hod />
       <About teachers={teachers} />
       <Students teachers={teachers} />
