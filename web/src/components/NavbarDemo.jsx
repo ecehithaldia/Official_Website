@@ -40,7 +40,7 @@ export function NavbarDemo() {
       link: "#downloads",
       dropdown: ["Brochure", "Forms"]
     },
-    { name: "Contact", link: "#contact" },
+    { name: "Contact", link: "#Get_in_Touch" },
   ];
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -56,7 +56,7 @@ export function NavbarDemo() {
               <div key={idx} className="relative group">
                 <a
                   href={item.link}
-                  className="text-neutral-900 dark:text-white px-3 py-2 font-medium hover:text-blue-600"
+                  className="text-white px-3 py-2 font-medium hover:text-blue-600"
                 >
                   {item.name}
                 </a>
@@ -102,7 +102,7 @@ export function NavbarDemo() {
                 <a
                   href={item.link}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="relative text-neutral-600 dark:text-neutral-300 py-2 px-4"
+                  className="relative text-white py-2 px-4"
                 >
                   {item.name}
                 </a>
@@ -113,7 +113,7 @@ export function NavbarDemo() {
                         key={subIdx}
                         href="#"
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className="text-sm text-neutral-600 dark:text-neutral-300 py-1 hover:text-blue-500"
+                        className="text-sm text-white py-1 hover:text-blue-500"
                       >
                         {subItem}
                       </a>
@@ -144,6 +144,7 @@ export function NavbarDemo() {
     </div>
   );
 }
+
 
 
 

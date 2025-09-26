@@ -21,9 +21,13 @@ export function Hod() {
           <h2 className="font-extrabold text-4xl md:text-5xl text-gray-900 dark:text-white leading-snug mb-4">
             Message from the Head of the Department
           </h2>
-          <h3 className="font-semibold text-xl md:text-2xl text-amber-500 dark:text-amber-500 mb-2">
-            Department of Electronics & Communication Engineering
-          </h3>
+          <h3 className="font-semibold text-xl md:text-2xl mb-2
+  bg-clip-text  text-gray-900 dark:text-white">
+  Department of Electronics & Communication Engineering
+</h3>
+
+
+
           <h6
             className= "text-gray-800 dark:text-gray-300  font-medium text-lg mb-8 inline-block"
           >

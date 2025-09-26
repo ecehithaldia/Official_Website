@@ -2,15 +2,17 @@ import React, { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "./firebase"; 
 import { seedTeachers } from "./SeedTeacher"; 
-import { ImagesSlider } from "@/components/ui/images-slider";
+import { ImagesSlider } from "./components/ui/images-slider";
 import { NavbarDemo } from "./components/NavbarDemo";
-import { Footer } from "@/components/Footer";
+import { Footer } from "./components/Footer";
 import { About } from "./components/About";
 import { Students } from "./components/Students";
 import { Research } from "./components/Research";
 import { Events } from "./components/Events";
 import { Downloads } from "./components/Downloads";
-import { Hod } from "./components/hod";
+import { Hod } from "./components/Hod";
+import { Communication } from "./components/Communication"; 
+
 
 
 export default function App() {
@@ -76,6 +78,8 @@ export default function App() {
       <Research teachers={teachers} />
       <Events teachers={teachers} />
       <Downloads teachers={teachers} />
+      
+      <Communication /> 
 
       {/* Footer */}
       <Footer />
