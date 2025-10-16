@@ -1,5 +1,8 @@
+
+
 "use client";
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Navbar,
   NavBody,
@@ -10,35 +13,44 @@ import {
   MobileNavHeader,
   MobileNavToggle,
   MobileNavMenu,
-} from "@/components/ui/resizable-navbar"; 
+} from "@/components/ui/resizable-navbar";
 
 export function NavbarDemo() {
   const navItems = [
     { name: "Home", link: "#" },
-    { 
-      name: "About", 
+    {
+      name: "About",
       link: "#about",
-      dropdown: ["Mission", "Vision", "Faculty", "History", "Accreditation", "Contact Info"]
+      dropdown: ["Mission", "Vision", "Faculty", "History", "Accreditation", "Contact Info"],
     },
-    { 
-      name: "Students", 
+    {
+      name: "Students",
       link: "#students",
-      dropdown: ["Courses", "Clubs", "Scholarships", "Projects", "Achievements", "Internships"]
+      dropdown: ["Courses", "Clubs", "Scholarships", "Projects", "Achievements", "Internships"],
     },
-    { 
-      name: "Research", 
+    {
+      name: "Research",
       link: "#research",
-      dropdown: ["Publications", "Labs", "Collaborations", "Funding"]
+      dropdown: ["Publications", "Labs", "Collaborations", "Funding"],
     },
-    { 
-      name: "Events", 
+    {
+      name: "Events",
       link: "#events",
-      dropdown: ["Seminars", "Workshops", "Tech Fest", "Cultural Fest", "Conferences", "Competitions", "Guest Lectures", "Exhibitions"]
+      dropdown: [
+        "Seminars",
+        "Workshops",
+        "Tech Fest",
+        "Cultural Fest",
+        "Conferences",
+        "Competitions",
+        "Guest Lectures",
+        "Exhibitions",
+      ],
     },
-    { 
-      name: "Downloads", 
+    {
+      name: "Downloads",
       link: "#downloads",
-      dropdown: ["Brochure", "Forms"]
+      dropdown: ["Brochure", "Forms"],
     },
     { name: "Contact", link: "#Get_in_Touch" },
   ];
@@ -46,11 +58,12 @@ export function NavbarDemo() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="relative w-full ">
+    <div className="relative w-full">
       <Navbar>
-        {/* Desktop */}
+        {/* Desktop Navbar */}
         <NavBody>
           <NavbarLogo />
+
           <div className="flex items-center gap-6">
             {navItems.map((item, idx) => (
               <div key={idx} className="relative group">
@@ -60,7 +73,7 @@ export function NavbarDemo() {
                 >
                   {item.name}
                 </a>
-                {/* Dropdown */}
+
                 {item.dropdown && (
                   <div className="absolute left-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-md opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-200 z-50">
                     {item.dropdown.map((subItem, subIdx) => (
@@ -77,13 +90,23 @@ export function NavbarDemo() {
               </div>
             ))}
           </div>
+
+          {/* Desktop Buttons */}
           <div className="flex items-center gap-4">
-            <NavbarButton variant="secondary">Login</NavbarButton>
-            <NavbarButton variant="primary">Signup</NavbarButton>
+            <Link to="/login">
+              <NavbarButton as="div" variant="secondary">
+                Login
+              </NavbarButton>
+            </Link>
+            <Link to="/signup">
+              <NavbarButton as="div" variant="primary">
+                Signup
+              </NavbarButton>
+            </Link>
           </div>
         </NavBody>
 
-        {/* Mobile */}
+        {/* Mobile Navbar */}
         <MobileNav>
           <MobileNavHeader>
             <NavbarLogo />
@@ -122,21 +145,19 @@ export function NavbarDemo() {
                 )}
               </div>
             ))}
+
+            {/* Mobile Buttons */}
             <div className="flex w-full flex-col gap-4 mt-4">
-              <NavbarButton
-                onClick={() => setIsMobileMenuOpen(false)}
-                variant="primary"
-                className="w-full"
-              >
-                Login
-              </NavbarButton>
-              <NavbarButton
-                onClick={() => setIsMobileMenuOpen(false)}
-                variant="primary"
-                className="w-full"
-              >
-                Signup
-              </NavbarButton>
+              <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                <NavbarButton as="div" variant="secondary" className="w-full">
+                  Login
+                </NavbarButton>
+              </Link>
+              <Link to="/signup" onClick={() => setIsMobileMenuOpen(false)}>
+                <NavbarButton as="div" variant="primary" className="w-full">
+                  Signup
+                </NavbarButton>
+              </Link>
             </div>
           </MobileNavMenu>
         </MobileNav>
@@ -145,6 +166,4 @@ export function NavbarDemo() {
   );
 }
 
-
-
-
+export default NavbarDemo;
