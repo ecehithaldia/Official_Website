@@ -3,21 +3,22 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from "react-route
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "./firebase";
 import { seedTeachers } from "./SeedTeacher";
-
 import { ImagesSlider } from "./components/ui/images-slider";
 import { NavbarDemo } from "./components/NavbarDemo";
 import { Footer } from "./components/Footer";
-import { About } from "./components/About";
-import { Students } from "./components/Students";
-import { Research } from "./components/Research";
-import { Events } from "./components/Events";
-import { Downloads } from "./components/Downloads";
+import { About } from "./components/Updates";
+// import { Students } from "./components/Students";
+// import { Research } from "./components/Research";
+// import { Events } from "./components/Events";
+// import { Downloads } from "./components/Downloads";
 import { Hod } from "./components/Hod";
 import { Communication } from "./components/Communication";
 
 // Pages
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
+import AboutPage from "@/pages/AboutPage";
+
 
 //  Wrapper component to access useLocation inside Router
 function AppContent() {
@@ -25,7 +26,7 @@ function AppContent() {
   const location = useLocation();
 
   // Pages where Navbar should NOT appear
-  const noNavbarRoutes = ["/login", "/signup"];
+  const noNavbarRoutes = ["/login", "/signup", "/aboutpage"];
   const showNavbar = !noNavbarRoutes.includes(location.pathname);
 
   const fetchTeachers = async () => {
@@ -55,6 +56,8 @@ function AppContent() {
         {/* Auth Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/about" element={<AboutPage />} />
+
 
         {/* Main App Route */}
         <Route
@@ -93,10 +96,10 @@ function AppContent() {
               {/* Sections */}
               <Hod />
               <About teachers={teachers} />
-              <Students teachers={teachers} />
+              {/* <Students teachers={teachers} />
               <Research teachers={teachers} />
               <Events teachers={teachers} />
-              <Downloads teachers={teachers} />
+              <Downloads teachers={teachers} /> */}
               <Communication />
               <Footer />
             </>
