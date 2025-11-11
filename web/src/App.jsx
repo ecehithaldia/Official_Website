@@ -57,6 +57,8 @@ function AppContent() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/students" element={<AboutPage />} />
+
 
 
         {/* Main App Route */}
