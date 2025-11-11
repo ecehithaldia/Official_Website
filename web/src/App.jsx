@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "./firebase";
+import { db, auth } from "./firebase"; // Import auth
+import { onAuthStateChanged } from "firebase/auth"; // Import auth state listener
 import { seedTeachers } from "./SeedTeacher";
 import { ImagesSlider } from "./components/ui/images-slider";
 import { NavbarDemo } from "./components/NavbarDemo";
@@ -19,16 +25,30 @@ import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import AboutPage from "@/pages/AboutPage";
 
-
 //  Wrapper component to access useLocation inside Router
 function AppContent() {
   const [teachers, setTeachers] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null); // State for the logged-in user
+  const [loadingAuth, setLoadingAuth] = useState(true); // State to track auth loading
   const location = useLocation();
 
   // Pages where Navbar should NOT appear
   const noNavbarRoutes = ["/login", "/signup", "/aboutpage"];
   const showNavbar = !noNavbarRoutes.includes(location.pathname);
 
+  // Listener for auth state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      setLoadingAuth(false);
+      console.log("Current user:", user ? user.displayName : "None");
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
+  // Fetch teachers
   const fetchTeachers = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "teachers"));
@@ -47,17 +67,25 @@ function AppContent() {
     fetchTeachers();
   }, []);
 
+  // Show a loading indicator while checking auth state
+  if (loadingAuth) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-white dark:bg-gray-900">
+        <p className="text-xl dark:text-white">Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="w-screen scroll-smooth bg-white dark:bg-gray-900">
-      {/* Conditionally show Navbar */}
-      {showNavbar && <NavbarDemo />}
+      {/* Conditionally show Navbar. Pass the currentUser to it. */}
+      {showNavbar && <NavbarDemo currentUser={currentUser} />}
 
       <Routes>
         {/* Auth Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/about" element={<AboutPage />} />
-
 
         {/* Main App Route */}
         <Route
@@ -76,7 +104,8 @@ function AppContent() {
                 >
                   <div className="relative z-50 flex flex-col items-center justify-center h-full text-center px-6">
                     <h1 className="text-white text-4xl md:text-5xl font-heading font-bold leading-tight">
-                      Department <br /> of <br /> Electronics & Communication Engineering
+                      Department <br /> of <br /> Electronics & Communication
+                      Engineering
                     </h1>
                     <h6 className="text-white text-sm mt-7 md:text-base font-heading leading-tight">
                       Accredited by National Board of Accreditation (NBA) <br />
@@ -95,7 +124,8 @@ function AppContent() {
 
               {/* Sections */}
               <Hod />
-              <About teachers={teachers} />
+              {/* Pass currentUser to any components that need it */}
+              <About teachers={teachers} currentUser={currentUser} />
               {/* <Students teachers={teachers} />
               <Research teachers={teachers} />
               <Events teachers={teachers} />
@@ -117,15 +147,3 @@ export default function App() {
     </Router>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-

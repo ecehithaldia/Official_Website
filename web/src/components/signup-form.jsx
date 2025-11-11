@@ -1,5 +1,10 @@
-
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { auth } from "../firebase"; // Assuming firebase.js is in the parent directory
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 
 export function SignupForm() {
   const [formData, setFormData] = useState({
@@ -7,13 +12,40 @@ export function SignupForm() {
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Signup data:", formData);
+    setLoading(true);
+    setError("");
+
+    try {
+      // 1. Create the user
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+      const user = userCredential.user;
+
+      // 2. Update the user's profile with their name
+      await updateProfile(user, {
+        displayName: formData.name,
+      });
+
+      console.log("Signup successful, user:", user);
+      navigate("/"); // Redirect to homepage after successful signup
+    } catch (err) {
+      setError(err.message);
+      console.error("Error signing up:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -26,6 +58,7 @@ export function SignupForm() {
         onSubmit={handleSubmit}
         className="flex flex-col gap-4 sm:gap-5 lg:gap-6"
       >
+        {/* --- Name Input --- */}
         <div>
           <label
             htmlFor="name"
@@ -45,6 +78,7 @@ export function SignupForm() {
           />
         </div>
 
+        {/* --- Email Input --- */}
         <div>
           <label
             htmlFor="email"
@@ -64,6 +98,7 @@ export function SignupForm() {
           />
         </div>
 
+        {/* --- Password Input --- */}
         <div>
           <label
             htmlFor="password"
@@ -83,14 +118,22 @@ export function SignupForm() {
           />
         </div>
 
+        {/* --- Error Message --- */}
+        {error && (
+          <p className="text-red-400 text-sm text-center">{error}</p>
+        )}
+
+        {/* --- Submit Button --- */}
         <button
           type="submit"
-          className="mt-4 sm:mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 sm:py-3 rounded-lg transition-all duration-300"
+          disabled={loading}
+          className="mt-4 sm:mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 sm:py-3 rounded-lg transition-all duration-300 disabled:bg-indigo-400"
         >
-          Sign Up
+          {loading ? "Creating Account..." : "Sign Up"}
         </button>
       </form>
 
+      {/* --- Link to Login --- */}
       <p className="text-center text-sm sm:text-base text-gray-400 mt-6">
         Already have an account?{" "}
         <a

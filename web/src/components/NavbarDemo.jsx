@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { auth } from "../firebase"; // Make sure this path is correct
+import { signOut } from "firebase/auth";
 import {
   Navbar,
   NavBody,
@@ -10,12 +12,31 @@ import {
   MobileNavHeader,
   MobileNavToggle,
   MobileNavMenu,
-} from "@/components/ui/resizable-navbar";
+} from "@/components/ui/resizable-navbar"; // Make sure this path is correct
 
-export function NavbarDemo() {
+// A simple user icon component
+const UserIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="h-5 w-5"
+  >
+    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+);
+
+export function NavbarDemo({ currentUser }) {
+  // 1. Here is your FULL list of nav items (Unchanged)
   const navItems = [
     { name: "Home", link: "/" },
-
     {
       name: "About",
       link: "/about",
@@ -28,7 +49,6 @@ export function NavbarDemo() {
         { name: "Facilities", link: "/about/facilities" },
       ],
     },
-
     {
       name: "Students",
       link: "/students",
@@ -41,7 +61,6 @@ export function NavbarDemo() {
         { name: "NPTEL Course [Completed / Enrolled]", link: "/students/nptel" },
       ],
     },
-
     {
       name: "Research",
       link: "/research",
@@ -52,7 +71,6 @@ export function NavbarDemo() {
         { name: "Consultancy", link: "/research/consultancy" },
       ],
     },
-
     {
       name: "Events",
       link: "/events",
@@ -62,12 +80,11 @@ export function NavbarDemo() {
         { name: "Invited Talks", link: "/events/invited-talks" },
         { name: "Alumni Interactions", link: "/events/alumni-interactions" },
         { name: "Newsletters", link: "/events/newsletters" },
-        { name: "Magazine", link: "/events/magazine" },
+        { name:"Magazine", link: "/events/magazine" },
         { name: "Wall Magazine", link: "/events/wall-magazine" },
         { name: "Others", link: "/events/others" },
       ],
     },
-
     {
       name: "Downloads",
       link: "/downloads",
@@ -76,11 +93,41 @@ export function NavbarDemo() {
         { name: "Academic Calendar", link: "/downloads/academic-calendar" },
       ],
     },
-
     { name: "Contact", link: "/contact" },
   ];
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      console.log("User logged out successfully");
+      navigate("/");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
+
+  // 2. --- ADDED ---
+  // This is our new "bouncer" function.
+  // It checks if a user can access a link.
+  const handleNavClick = (e, item) => {
+    // Allow navigation if:
+    // 1. The user is logged in (currentUser is not null)
+    // 2. The item they clicked is "Home" (which is always public)
+    if (currentUser || item.name === "Home") {
+      return; // All good, let the <Link> component do its thing
+    }
+
+    // Otherwise, the user is NOT logged in and clicked a protected link
+    e.preventDefault(); // Stop the link from navigating to its 'to' prop
+    navigate("/login"); // Send them to the login page instead
+  };
+
+  // 3. --- DELETED ---
+  // We're removing the old 'visibleNavItems' logic.
+  // We want to show ALL items now.
 
   return (
     <div className="relative w-full">
@@ -90,10 +137,13 @@ export function NavbarDemo() {
           <NavbarLogo />
 
           <div className="flex items-center gap-6">
+            {/* 4. --- MODIFIED ---
+                We now map over the FULL 'navItems' list */}
             {navItems.map((item, idx) => (
               <div key={idx} className="relative group">
                 <Link
                   to={item.link}
+                  onClick={(e) => handleNavClick(e, item)} // <-- ADDED
                   className="text-white px-3 py-2 font-medium hover:text-blue-600"
                 >
                   {item.name}
@@ -105,6 +155,7 @@ export function NavbarDemo() {
                       <Link
                         key={subIdx}
                         to={subItem.link}
+                        onClick={(e) => handleNavClick(e, subItem)} // <-- ADDED
                         className="block px-4 py-2 text-sm text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                       >
                         {subItem.name}
@@ -116,18 +167,38 @@ export function NavbarDemo() {
             ))}
           </div>
 
-          {/* Desktop Buttons */}
+          {/* Desktop Auth Buttons (This logic is unchanged) */}
           <div className="flex items-center gap-4">
-            <Link to="/login">
-              <NavbarButton as="div" variant="secondary">
-                Login
-              </NavbarButton>
-            </Link>
-            <Link to="/signup">
-              <NavbarButton as="div" variant="primary">
-                Signup
-              </NavbarButton>
-            </Link>
+            {currentUser ? (
+              <>
+                <div className="flex items-center gap-2 text-white">
+                  <UserIcon />
+                  <span className="font-medium">
+                    {currentUser.displayName || "User"}
+                  </span>
+                </div>
+                <NavbarButton
+                  as="button"
+                  variant="secondary"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </NavbarButton>
+              </>
+            ) : (
+              <>
+                <Link to="/login">
+                  <NavbarButton as="div" variant="secondary">
+                    Login
+                  </NavbarButton>
+                </Link>
+                <Link to="/signup">
+                  <NavbarButton as="div" variant="primary">
+                    Signup
+                  </NavbarButton>
+                </Link>
+              </>
+            )}
           </div>
         </NavBody>
 
@@ -145,11 +216,18 @@ export function NavbarDemo() {
             isOpen={isMobileMenuOpen}
             onClose={() => setIsMobileMenuOpen(false)}
           >
+            {/* 5. --- MODIFIED ---
+                We also map over the FULL 'navItems' list for mobile */}
             {navItems.map((item, idx) => (
               <div key={`mobile-link-${idx}`} className="flex flex-col">
                 <Link
                   to={item.link}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={(e) => {
+                    // --- MODIFIED ---
+                    // On mobile, we need to BOTH check auth AND close the menu
+                    setIsMobileMenuOpen(false); // Always close the menu on click
+                    handleNavClick(e, item); // Run our bouncer check
+                  }}
                   className="relative text-white py-2 px-4"
                 >
                   {item.name}
@@ -160,7 +238,11 @@ export function NavbarDemo() {
                       <Link
                         key={subIdx}
                         to={subItem.link}
-                        onClick={() => setIsMobileMenuOpen(false)}
+                        onClick={(e) => {
+                          // --- MODIFIED ---
+                          setIsMobileMenuOpen(false); // Also close on sub-item click
+                          handleNavClick(e, subItem); // And run the bouncer check
+                        }}
                         className="text-sm text-white py-1 hover:text-blue-500"
                       >
                         {subItem.name}
@@ -171,18 +253,56 @@ export function NavbarDemo() {
               </div>
             ))}
 
-            {/* Mobile Buttons */}
+            {/* Mobile Auth Buttons (This logic is unchanged) */}
             <div className="flex w-full flex-col gap-4 mt-4">
-              <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                <NavbarButton as="div" variant="secondary" className="w-full">
-                  Login
-                </NavbarButton>
-              </Link>
-              <Link to="/signup" onClick={() => setIsMobileMenuOpen(false)}>
-                <NavbarButton as="div" variant="primary" className="w-full">
-                  Signup
-                </NavbarButton>
-              </Link>
+              {currentUser ? (
+                <>
+                  <div className="flex items-center gap-2 text-white py-2 px-4">
+                    <UserIcon />
+                    <span className="font-medium">
+                      {currentUser.displayName || "User"}
+                    </span>
+                  </div>
+                  <NavbarButton
+                    as="button"
+                    variant="secondary"
+                    className="w-full"
+                    onClick={() => {
+                      handleLogout();
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    Logout
+                  </NavbarButton>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <NavbarButton
+                      as="div"
+                      variant="secondary"
+                      className="w-full"
+                    >
+                      Login
+                    </NavbarButton>
+                  </Link>
+                  <Link
+                    to="/signup"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <NavbarButton
+                      as="div"
+                      variant="primary"
+                      className="w-full"
+                    >
+                      Signup
+                    </NavbarButton>
+                  </Link>
+                </>
+              )}
             </div>
           </MobileNavMenu>
         </MobileNav>
@@ -192,4 +312,3 @@ export function NavbarDemo() {
 }
 
 export default NavbarDemo;
-

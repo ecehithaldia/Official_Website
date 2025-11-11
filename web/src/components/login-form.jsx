@@ -1,19 +1,39 @@
-
-
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { auth } from "../firebase"; // Assuming firebase.js is in the parent directory
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 export function LoginForm() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login data:", formData);
+    setLoading(true);
+    setError("");
+
+    try {
+      await signInWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+      console.log("Login successful");
+      navigate("/"); // Redirect to homepage after successful login
+    } catch (err) {
+      setError(err.message);
+      console.error("Error logging in:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -26,6 +46,7 @@ export function LoginForm() {
         onSubmit={handleSubmit}
         className="flex flex-col gap-4 sm:gap-5 lg:gap-6"
       >
+        {/* --- Email Input --- */}
         <div>
           <label
             htmlFor="email"
@@ -45,6 +66,7 @@ export function LoginForm() {
           />
         </div>
 
+        {/* --- Password Input --- */}
         <div>
           <label
             htmlFor="password"
@@ -64,14 +86,22 @@ export function LoginForm() {
           />
         </div>
 
+        {/* --- Error Message --- */}
+        {error && (
+          <p className="text-red-500 text-sm text-center">{error}</p>
+        )}
+
+        {/* --- Submit Button --- */}
         <button
           type="submit"
-          className="mt-4 sm:mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 sm:py-3 rounded-lg transition-all duration-300"
+          disabled={loading}
+          className="mt-4 sm:mt-6 w-full bg-indigo-600 hover:bg-indigo-7T00 text-white font-semibold py-2 sm:py-3 rounded-lg transition-all duration-300 disabled:bg-indigo-400"
         >
-          Log In
+          {loading ? "Logging In..." : "Log In"}
         </button>
       </form>
 
+      {/* --- Link to Signup --- */}
       <p className="text-center text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-6">
         Don’t have an account?{" "}
         <a
