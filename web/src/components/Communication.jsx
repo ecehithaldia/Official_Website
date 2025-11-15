@@ -10,10 +10,9 @@ export function Communication() {
   const [message, setMessage] = useState("");
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // prevent page refresh
+    e.preventDefault(); 
     console.log("Form submitted:", { fullName, email, subject, message });
     alert("Message sent successfully!");
-    // reset form
     setFullName("");
     setEmail("");
     setSubject("");
@@ -22,7 +21,7 @@ export function Communication() {
 
   return (
     <section
-      id="Get_in_Touch"
+      id="contact"
       className="relative py-20 px-6 md:px-20 bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-950 dark:to-blue-950"
     >
       {/* Background decoration */}
@@ -41,7 +40,6 @@ export function Communication() {
           <h2 className="text-5xl md:text-6xl font-bold mb-4 text-white dark:text-white">
             Get in Touch
           </h2>
-          
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
@@ -57,7 +55,6 @@ export function Communication() {
               <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
               
               <h3 className="text-2xl font-bold text-white mb-8 relative z-10">Let's get in touch</h3>
-              
 
               <div className="space-y-6 relative z-10">
                 <motion.div whileHover={{ x: 5 }} className="flex items-start space-x-4 text-white">
@@ -113,7 +110,6 @@ export function Communication() {
                     <h4 className="font-semibold mb-1">Office Hours:</h4>
                     <p className="text-blue-100 text-sm">
                       Mon - Fri: 9:00 AM - 5:00 PM<br />
-                      
                     </p>
                   </div>
                 </motion.div>
@@ -134,7 +130,9 @@ export function Communication() {
             >
               <div className="flex items-center mb-8">
                 <MessageSquare className="w-8 h-8 text-blue-600 dark:text-blue-400 mr-3" />
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Send us a Message</h3>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  Send us a Message
+                </h3>
               </div>
               
               <div className="space-y-6">
@@ -233,6 +231,7 @@ export function Communication() {
     </section>
   );
 }
+
 
 
 

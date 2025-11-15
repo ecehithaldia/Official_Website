@@ -2,6 +2,9 @@ import React from "react";
 import { motion } from "framer-motion";
 import { BentoGrid, BentoGridItem } from "../components/ui/bento-grid.jsx";
 import { Carousel, Card } from "@/components/ui/apple-cards-carousel.jsx";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+
 
 // 🌌 Shared Styles
 const sectionBase =
@@ -15,7 +18,7 @@ const subText = "text-gray-200 text-lg leading-relaxed text-justify";
 
 // 🟦 Institute Section
 const Institute = ({ theme }) => (
-  <section className={`${sectionBase}`}>
+  <section id="institute" className={`${sectionBase}`}>
     <motion.h2
       initial={{ opacity: 0, y: -30 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -75,7 +78,7 @@ const Department = () => {
   ];
 
   return (
-    <section className="py-16 bg-[#0B1120] text-gray-100">
+    <section id="department" className="py-16 bg-[#0B1120] text-gray-100">
       <motion.h2
         className="text-4xl font-bold mb-6 text-center text-white"
         initial={{ opacity: 0, y: -20 }}
@@ -119,15 +122,8 @@ const Department = () => {
         ))}
       </motion.div>
     </section>
-
   );
-
-
-  
 };
-
-
-
 
 // 🟦 Faculty Section (UPDATED)
 const Faculty = ({ theme }) => {
@@ -222,7 +218,6 @@ const Faculty = ({ theme }) => {
   );
 };
 
-
 // 🟫 Technical Staff
 const TechnicalStaff = ({ theme }) => {
   const staff = [
@@ -234,7 +229,7 @@ const TechnicalStaff = ({ theme }) => {
   ];
 
   return (
-    <section className={`${sectionBase}`}>
+    <section id="technical-staff" className={`${sectionBase}`}>
       <motion.h2
         className={`${headingStyle}`}
         initial={{ opacity: 0, y: -20 }}
@@ -260,7 +255,6 @@ const TechnicalStaff = ({ theme }) => {
     </section>
   );
 };
-
 
 // 🟥 Departmental Committees
 const Committees = ({ theme }) => {
@@ -368,7 +362,7 @@ const Committees = ({ theme }) => {
   ];
 
   return (
-    <section className={`${sectionBase}`}>
+    <section id="committees" className={`${sectionBase}`}>
       <motion.h2
         className={`${headingStyle}`}
         initial={{ opacity: 0, y: -20 }}
@@ -414,7 +408,8 @@ const Committees = ({ theme }) => {
                           {member.designation || "-"}
                         </td>
                       )}
-                      <td className="py-2 px-4">{member.role || "-"}</td>
+                      <td className="py-2 px-4">{member.role || "-"}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -427,7 +422,6 @@ const Committees = ({ theme }) => {
   );
 };
 
-
 // 🟪 Facilities Section
 const Facilities = ({ theme }) => {
   const labs = [
@@ -436,7 +430,6 @@ const Facilities = ({ theme }) => {
       description:
         "As the name suggests, it is the very beginning part in the practical area for all engineering disciplines. According to the syllabus designed by HIT (Autonomous), 1st & 2nd semester students become familiar with basic components of analog and digital electronics. They gather knowledge through the observation of the actual behavior of electronic components. Ten numbers of equal timing slots in a week are available where 40 students can perform experiment at a time...",
       image: "",
-
     },
     {
       name: "ELECTRONICS DEVICE LAB",
@@ -498,11 +491,10 @@ const Facilities = ({ theme }) => {
         "Explores machine learning models, data processing, and neural network implementations.",
       image: "",
     },
-
   ];
 
   return (
-    <section className={`${sectionBase}`}>
+    <section id="facilities" className={`${sectionBase}`}>
       <motion.h2
         className={`${headingStyle}`}
         initial={{ opacity: 0, y: -20 }}
@@ -512,7 +504,6 @@ const Facilities = ({ theme }) => {
         Facilities
       </motion.h2>
 
-      {/* Carousel replacing the grid layout */}
       <Carousel
         items={labs.map((lab, i) => (
           <Card
@@ -544,6 +535,22 @@ const Facilities = ({ theme }) => {
 
 // 🏁 Main Component Export
 const AboutPage = ({ theme }) => {
+
+    const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace("#", "");
+      const el = document.getElementById(id);
+      if (el) {
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 200);
+      }
+    }
+  }, [location]);
+
+
   return (
     <main className="relative z-10">
       <Institute theme={theme} />
