@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext, createContext } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   useLocation,
+  Navigate,
 } from "react-router-dom";
 
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "./firebase";
+// ⭐ FIXED — Added 'signOut' to the import
+import { db, auth, onAuthStateChanged, signOut } from "./firebase";
 import { seedTeachers } from "./SeedTeacher";
 
 import { ImagesSlider } from "./components/ui/images-slider";
@@ -22,15 +24,71 @@ import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import AboutPage from "@/pages/AboutPage";
 import StudentsPage from "@/pages/StudentsPage";
-
-// ⭐ ADDED — correct Events import
 import Events from "@/pages/Events";
+
+// ⭐ --- START AUTH CONTEXT ---
+// We define the Auth context and provider here to avoid creating new files.
+
+const AuthContext = createContext();
+
+export function useAuth() {
+  return useContext(AuthContext);
+}
+
+export function AuthProvider({ children }) {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  function logout() {
+    // This will now work because 'signOut' is imported
+    return signOut(auth);
+  }
+
+  useEffect(() => {
+    // This listener handles user state changes (login, logout)
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      setLoading(false);
+    });
+
+    return unsubscribe; // Cleanup listener on unmount
+  }, []);
+
+  const value = {
+    currentUser,
+    logout,
+    loading, // Added loading state
+  };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
+}
+
+// ⭐ --- END AUTH CONTEXT ---
+
+// ⭐ --- START PROTECTED ROUTE ---
+// This component protects routes that require authentication.
+function ProtectedRoute({ children }) {
+  const { currentUser } = useAuth();
+
+  if (!currentUser) {
+    // Redirect them to the /login page, but save the current location
+    // so we can send them back after login.
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+}
+// ⭐ --- END PROTECTED ROUTE ---
 
 function AppContent() {
   const [teachers, setTeachers] = useState([]);
   const location = useLocation();
 
-  // Smooth scroll to hashed sections like #alumni
+  // Smooth scroll
   useEffect(() => {
     if (location.hash) {
       const id = location.hash.replace("#", "");
@@ -43,7 +101,8 @@ function AppContent() {
     }
   }, [location]);
 
-  const noNavbarRoutes = ["/login", "/signup", "/aboutpage"];
+  // Hide Navbar on login/signup
+  const noNavbarRoutes = ["/login", "/signup"]; // Removed /aboutpage
   const showNavbar = !noNavbarRoutes.includes(location.pathname);
 
   // Fetch teachers
@@ -70,23 +129,11 @@ function AppContent() {
       {showNavbar && <NavbarDemo />}
 
       <Routes>
-        {/* Auth */}
+        {/* Auth (Public) */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* Pages */}
-        <Route path="/about" element={<AboutPage />} />
-
-        <Route path="/students" element={<StudentsPage />} />
-
-        {/* ⭐ ADDED — FULL EVENTS ROUTE SUPPORT */}
-        <Route path="/events" element={<Events />} />
-        <Route path="/events/invited-talks" element={<Events />} />
-        <Route path="/events/artefacts" element={<Events />} />
-        <Route path="/events/wall-magazine" element={<Events />} />
-        <Route path="/events/alumni-interactions" element={<Events />} />
-
-        {/* Home */}
+        {/* Home (Public) */}
         <Route
           path="/"
           element={
@@ -102,7 +149,8 @@ function AppContent() {
                 >
                   <div className="relative z-50 flex flex-col items-center justify-center h-full text-center px-6">
                     <h1 className="text-white text-4xl md:text-5xl font-heading font-bold leading-tight">
-                      Department <br /> of <br /> Electronics & Communication Engineering
+                      Department <br /> of <br /> Electronics & Communication
+                      Engineering
                     </h1>
                     <h6 className="text-white text-sm mt-7 md:text-base font-heading">
                       Accredited by National Board of Accreditation (NBA)
@@ -128,6 +176,69 @@ function AppContent() {
             </>
           }
         />
+
+        {/* --- Protected Pages --- */}
+        {/* All routes below require login */}
+
+        <Route
+          path="/about"
+          element={
+            <ProtectedRoute>
+              <AboutPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/students"
+          element={
+            <ProtectedRoute>
+              <StudentsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/events"
+          element={
+            <ProtectedRoute>
+              <Events />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/events/invited-talks"
+          element={
+            <ProtectedRoute>
+              <Events />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/events/artefacts"
+          element={
+            <ProtectedRoute>
+              <Events />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/events/wall-magazine"
+          element={
+            <ProtectedRoute>
+              <Events />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/events/alumni-interactions"
+          element={
+            <ProtectedRoute>
+              <Events />
+            </ProtectedRoute>
+          }
+        />
+        {/* Add other protected routes here (e.g., /research, /downloads) */}
       </Routes>
     </div>
   );
@@ -135,21 +246,11 @@ function AppContent() {
 
 export default function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    // ⭐ WRAPPED APP IN AUTH PROVIDER
+    <AuthProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </AuthProvider>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
