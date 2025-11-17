@@ -1,17 +1,6 @@
-// Firebase config
-const firebaseConfig = {
-  apiKey: "AIzaSyCK0Il90vL4VvNfYoI2dNE65icb7AgID2A",
-  authDomain: "departmentalwebsite-d5ad2.firebaseapp.com",
-  projectId: "departmentalwebsite-d5ad2",
-  storageBucket: "departmentalwebsite-d5ad2.firebasestorage.app",
-  messagingSenderId: "1090879712887",
-  appId: "1:1090879712887:web:117f66c43eccde57e7a072",
-  measurementId: "G-5JYM0SEW6L"
-};
-
+// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-// Added the Import auth functions
 import {
   getAuth,
   GoogleAuthProvider,
@@ -24,13 +13,25 @@ import {
   signOut,
 } from "firebase/auth";
 
+// Your web app's Firebase configuration
+// Now pulling variables from import.meta.env
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+};
+
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
-// Added the feature — Initialize and export auth
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
+// Export all the services
 export {
   db,
   auth,
